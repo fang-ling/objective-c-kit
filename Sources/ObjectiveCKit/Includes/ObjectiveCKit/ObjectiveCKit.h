@@ -20,8 +20,4 @@
 #ifndef ObjectiveCKit_h
 #define ObjectiveCKit_h
 
-#include "../../runtime_exports.h"
-
-#include "../../Object.h"
-
 #endif /* ObjectiveCKit_h */
