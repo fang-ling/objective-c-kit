@@ -1,8 +1,8 @@
 /*
- *  ObjectiveCKit.h
+ *  ObjectiveCObject.h
  *  objective-c-kit
  *
- *  Created by Fang Ling on 2026/4/12.
+ *  Created by Fang Ling on 2026/4/18.
  *
  *  This program is free software: you can redistribute it and/or modify it
  *  under the terms of the GNU Lesser General Public License version 3.0 only,
@@ -18,9 +18,22 @@
  *  <https://www.gnu.org/licenses/>.
  */
 
-#ifndef ObjectiveCKit_h
-#define ObjectiveCKit_h
+#import "Base.h"
 
-#import "../../ObjectiveCObject.h"
+#ifdef __APPLE__
+#  import <objc/NSObject.h>
+#else
+#  import "ObjFW/OFObject.h"
+#endif
 
-#endif /* ObjectiveCKit_h */
+OBJECTIVE_C_ASSUME_NONNULL_BEGIN
+
+#ifdef __APPLE__
+@interface ObjectiveCObject: NSObject
+#else
+@interface ObjectiveCObject: OFObject
+#endif
+
+@end
+
+OBJECTIVE_C_ASSUME_NONNULL_END

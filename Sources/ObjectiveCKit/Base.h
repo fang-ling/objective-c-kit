@@ -1,8 +1,8 @@
 /*
- *  ObjectiveCKit.h
+ *  Base.h
  *  objective-c-kit
  *
- *  Created by Fang Ling on 2026/4/12.
+ *  Created by Fang Ling on 2026/4/18.
  *
  *  This program is free software: you can redistribute it and/or modify it
  *  under the terms of the GNU Lesser General Public License version 3.0 only,
@@ -18,9 +18,12 @@
  *  <https://www.gnu.org/licenses/>.
  */
 
-#ifndef ObjectiveCKit_h
-#define ObjectiveCKit_h
+#ifndef Base_h
+#define Base_h
 
-#import "../../ObjectiveCObject.h"
+#define OBJECTIVE_C_ASSUME_NONNULL_BEGIN _Pragma("clang assume_nonnull begin")
+#define OBJECTIVE_C_ASSUME_NONNULL_END   _Pragma("clang assume_nonnull end")
 
-#endif /* ObjectiveCKit_h */
+#define var __auto_type
+
+#endif /* Base_h */

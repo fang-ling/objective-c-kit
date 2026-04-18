@@ -1,8 +1,12 @@
 /*
- *  ObjectiveCKit.h
+ *  unistd_wrapper.h
  *  objective-c-kit
  *
- *  Created by Fang Ling on 2026/4/12.
+ *  Derived from ObjFW by Fang Ling on 2026/4/18.
+ *
+ *  Copyright (c) 2008-2026 Jonathan Schleifer <js@nil.im>
+ *
+ *  All rights reserved.
  *
  *  This program is free software: you can redistribute it and/or modify it
  *  under the terms of the GNU Lesser General Public License version 3.0 only,
@@ -18,9 +22,18 @@
  *  <https://www.gnu.org/licenses/>.
  */
 
-#ifndef ObjectiveCKit_h
-#define ObjectiveCKit_h
+#ifndef __APPLE__
 
-#import "../../ObjectiveCObject.h"
+#include <stdlib.h>	/* Make sure we have any libc include */
 
-#endif /* ObjectiveCKit_h */
+#ifdef HAVE_UNISTD_H
+# ifdef __GLIBC__
+#  undef __USE_XOPEN	/* Needed to avoid old glibc using __block */
+# endif
+# include <unistd.h>
+# ifdef __GLIBC__
+#  define __USE_XOPEN 1
+# endif
+#endif
+
+#endif /* !__APPLE__ */

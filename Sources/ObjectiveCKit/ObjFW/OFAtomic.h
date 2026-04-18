@@ -1,8 +1,12 @@
 /*
- *  ObjectiveCKit.h
+ *  OFAtomic.h
  *  objective-c-kit
  *
- *  Created by Fang Ling on 2026/4/12.
+ *  Derived from ObjFW by Fang Ling on 2026/4/18.
+ *
+ *  Copyright (c) 2008-2026 Jonathan Schleifer <js@nil.im>
+ *
+ *  All rights reserved.
  *
  *  This program is free software: you can redistribute it and/or modify it
  *  under the terms of the GNU Lesser General Public License version 3.0 only,
@@ -18,9 +22,21 @@
  *  <https://www.gnu.org/licenses/>.
  */
 
-#ifndef ObjectiveCKit_h
-#define ObjectiveCKit_h
+#ifndef __APPLE__
 
-#import "../../ObjectiveCObject.h"
+#include <stdlib.h>
 
-#endif /* ObjectiveCKit_h */
+#import "macros.h"
+
+#if (defined(OF_AMD64) || defined(OF_X86)) && defined(__GNUC__)
+# import "platform/x86/OFAtomic.h"
+#elif defined(OF_POWERPC) && defined(__GNUC__) && !defined(__APPLE_CC__) && \
+    !defined(OF_AIX)
+# import "platform/PowerPC/OFAtomic.h"
+#elif defined(OF_ARM64) || defined(__wasi__)
+# import "platform/GCC4.7/OFAtomic.h"
+#else
+# error No atomic operations available!
+#endif
+
+#endif /* !__APPLE__ */
