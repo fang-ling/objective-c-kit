@@ -24,6 +24,18 @@ OBJECTIVE_C_ASSUME_NONNULL_BEGIN
 
 @implementation ObjectiveCObject
 
++ (instancetype)alloc {
+  return [super alloc];
+}
+
+- (instancetype)init {
+  return [super init];
+}
+
+- (void)dealloc {
+  [super dealloc];
+}
+
 @end
 
 OBJECTIVE_C_ASSUME_NONNULL_END

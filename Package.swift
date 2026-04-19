@@ -40,6 +40,7 @@ let package = Package(
       publicHeadersPath: "Includes",
       cSettings: [
         .unsafeFlags(["-fobjc-runtime=objfw-1.5"], .when(platforms: [.wasi])),
+        .unsafeFlags(["-fno-objc-arc"]),
         .headerSearchPath("ObjFW"),
         .headerSearchPath("ObjFW/runtime")
       ]
