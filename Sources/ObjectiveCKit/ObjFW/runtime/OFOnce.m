@@ -1,8 +1,12 @@
 /*
- *  ObjectiveCKit.h
+ *  OFOnce.m
  *  objective-c-kit
  *
- *  Created by Fang Ling on 2026/4/12.
+ *  Derived from ObjFW by Fang Ling on 2026/4/18.
+ *
+ *  Copyright (c) 2008-2026 Jonathan Schleifer <js@nil.im>
+ *
+ *  All rights reserved.
  *
  *  This program is free software: you can redistribute it and/or modify it
  *  under the terms of the GNU Lesser General Public License version 3.0 only,
@@ -18,9 +22,16 @@
  *  <https://www.gnu.org/licenses/>.
  */
 
-#ifndef ObjectiveCKit_h
-#define ObjectiveCKit_h
+#ifndef __APPLE__
 
-#import "../../ObjectiveCObject.h"
+#import "ObjFWRT.h"
+#import "private.h"
 
-#endif /* ObjectiveCKit_h */
+#import "OFOnce.h"
+
+extern void OFOnce(OFOnceControl *control, OFOnceFunction function)
+    OF_VISIBILITY_INTERNAL;
+
+#include "../OFOnce.m"
+
+#endif /* !__APPLE__ */

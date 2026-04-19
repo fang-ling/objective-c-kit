@@ -1,0 +1,318 @@
+/*
+ *  OFBlock.m
+ *  objective-c-kit
+ *
+ *  Derived from ObjFW by Fang Ling on 2026/4/18.
+ *
+ *  Copyright (c) 2008-2026 Jonathan Schleifer <js@nil.im>
+ *
+ *  All rights reserved.
+ *
+ *  This program is free software: you can redistribute it and/or modify it
+ *  under the terms of the GNU Lesser General Public License version 3.0 only,
+ *  as published by the Free Software Foundation.
+ *
+ *  This program is distributed in the hope that it will be useful, but WITHOUT
+ *  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *  FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
+ *  version 3.0 for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  version 3.0 along with this program. If not, see
+ *  <https://www.gnu.org/licenses/>.
+ */
+
+#ifndef __APPLE__
+
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+
+#import "OFBlock.h"
+#import "OFAtomic.h"
+#import "OFPlainMutex.h"
+
+#import "runtime/private.h"
+
+struct Block {
+	Class isa;
+	int flags;
+	int reserved;
+	void (*invoke)(void *block, ...);
+	struct {
+		unsigned long reserved;
+		unsigned long size;
+		void (*copyHelper)(void *dest, void *src);
+		void (*disposeHelper)(void *src);
+		const char *signature;
+	} *descriptor;
+};
+
+struct Byref {
+	Class isa;
+	struct Byref *forwarding;
+	int flags;
+	int size;
+	void (*keepByref)(void *dest, void *src);
+	void (*disposeByref)(void *);
+};
+
+enum {
+	OFBlockHasCopyDispose = (1 << 25),
+	OFBlockHasCtor	      = (1 << 26),
+	OFBlockIsGlobal	      = (1 << 28),
+	OFBlockHasStret	      = (1 << 29),
+	OFBlockHasSignature   = (1 << 30)
+};
+#define OFBlockRefCountMask 0xFFFF
+
+enum {
+	OFBlockFieldIsObject =   3,
+	OFBlockFieldIsBlock  =   7,
+	OFBlockFieldIsByref  =   8,
+	OFBlockFieldIsWeak   =  16,
+	OFBlockByrefCaller   = 128
+};
+
+@protocol RetainRelease
+- (instancetype)retain;
+- (void)release;
+@end
+
+/* Begin of ObjC module */
+static struct objc_class _NSConcreteStackBlock_metaclass = {
+	Nil, Nil, "OFStackBlock", 8, _OBJC_CLASS_INFO_METACLASS,
+	sizeof(_NSConcreteStackBlock_metaclass), NULL, NULL
+};
+
+struct objc_class _NSConcreteStackBlock = {
+	&_NSConcreteStackBlock_metaclass, (Class)(void *)"OFBlock",
+	"OFStackBlock", 8, _OBJC_CLASS_INFO_CLASS, sizeof(struct Block),
+	NULL, NULL
+};
+
+static struct objc_class _NSConcreteGlobalBlock_metaclass = {
+	Nil, Nil, "OFGlobalBlock", 8, _OBJC_CLASS_INFO_METACLASS,
+	sizeof(_NSConcreteGlobalBlock_metaclass), NULL, NULL
+};
+
+struct objc_class _NSConcreteGlobalBlock = {
+	&_NSConcreteGlobalBlock_metaclass, (Class)(void *)"OFBlock",
+	"OFGlobalBlock", 8, _OBJC_CLASS_INFO_CLASS, sizeof(struct Block),
+	NULL, NULL
+};
+
+static struct objc_class _NSConcreteMallocBlock_metaclass = {
+	Nil, Nil, "OFMallocBlock", 8, _OBJC_CLASS_INFO_METACLASS,
+	sizeof(_NSConcreteMallocBlock_metaclass), NULL, NULL
+};
+
+struct objc_class _NSConcreteMallocBlock = {
+	&_NSConcreteMallocBlock_metaclass, (Class)(void *)"OFBlock",
+	"OFMallocBlock", 8, _OBJC_CLASS_INFO_CLASS, sizeof(struct Block),
+	NULL, NULL
+};
+
+static struct {
+	unsigned long unknown;
+	struct objc_selector *selectorRefs;
+	uint16_t classDefsCount, categoryDefsCount;
+	void *defs[4];
+} symtab = {
+	0, NULL, 3, 0,
+	{
+		&_NSConcreteStackBlock, &_NSConcreteGlobalBlock,
+		&_NSConcreteMallocBlock, NULL
+	}
+};
+
+static struct objc_module module = {
+	8, sizeof(module), NULL, (struct objc_symtab *)&symtab
+};
+
+OF_CONSTRUCTOR()
+{
+	__objc_exec_class(&module);
+}
+
+static struct {
+	Class isa;
+} allocFailedException;
+
+void *
+_Block_copy(const void *block_)
+{
+	struct Block *block = (struct Block *)block_;
+
+	if ([(id)block isMemberOfClass: (Class)&_NSConcreteStackBlock]) {
+		struct Block *copy = malloc(block->descriptor->size);
+		memcpy(copy, block, block->descriptor->size);
+
+		object_setClass((id)copy, (Class)&_NSConcreteMallocBlock);
+		copy->flags++;
+
+		if (block->flags & OFBlockHasCopyDispose)
+			block->descriptor->copyHelper(copy, block);
+
+		return copy;
+	}
+
+	if ([(id)block isMemberOfClass: (Class)&_NSConcreteMallocBlock]) {
+		OFAtomicIntIncrease(&block->flags);
+	}
+
+	return block;
+}
+
+void
+_Block_release(const void *block_)
+{
+	struct Block *block = (struct Block *)block_;
+
+	if (object_getClass((id)block) != (Class)&_NSConcreteMallocBlock)
+		return;
+
+	if ((OFAtomicIntDecrease(&block->flags) & OFBlockRefCountMask) == 0) {
+		if (block->flags & OFBlockHasCopyDispose)
+			block->descriptor->disposeHelper(block);
+
+		free(block);
+	}
+}
+
+void
+_Block_object_assign(void *dst_, const void *src_, const int flags_)
+{
+	int flags = flags_ & (OFBlockFieldIsBlock | OFBlockFieldIsObject |
+	    OFBlockFieldIsByref);
+
+	if (src_ == NULL)
+		return;
+
+	switch (flags) {
+	case OFBlockFieldIsBlock:
+		*(struct Block **)dst_ = _Block_copy(src_);
+		break;
+	case OFBlockFieldIsObject:
+		if (!(flags_ & OFBlockByrefCaller))
+			*(id *)dst_ = objc_retain((id)src_);
+		break;
+	case OFBlockFieldIsByref:;
+		struct Byref *src = (struct Byref *)src_;
+		struct Byref **dst = (struct Byref **)dst_;
+
+		src = src->forwarding;
+
+		if ((src->flags & OFBlockRefCountMask) == 0) {
+      *dst = malloc(src->size);
+			memcpy(*dst, src, src->size);
+			(*dst)->flags =
+			    ((*dst)->flags & ~OFBlockRefCountMask) | 1;
+			(*dst)->forwarding = *dst;
+
+			if (src->flags & OFBlockHasCopyDispose)
+				src->keepByref(*dst, src);
+
+			if (!OFAtomicPointerCompareAndSwap(
+			    (void **)&src->forwarding, src, *dst)) {
+				src->disposeByref(*dst);
+				free(*dst);
+
+				*dst = src->forwarding;
+			}
+		} else
+			*dst = src;
+
+		OFAtomicIntIncrease(&(*dst)->flags);
+
+		break;
+	}
+}
+
+void
+_Block_object_dispose(const void *object_, const int flags_)
+{
+	const int flags = flags_ & (OFBlockFieldIsBlock | OFBlockFieldIsObject |
+	    OFBlockFieldIsByref);
+
+	if (object_ == NULL)
+		return;
+
+	switch (flags) {
+	case OFBlockFieldIsBlock:
+		_Block_release(object_);
+		break;
+	case OFBlockFieldIsObject:
+		if (!(flags_ & OFBlockByrefCaller))
+			objc_release((id)object_);
+		break;
+	case OFBlockFieldIsByref:;
+		struct Byref *object = (struct Byref *)object_;
+
+		object = object->forwarding;
+
+		if ((OFAtomicIntDecrease(&object->flags) &
+		    OFBlockRefCountMask) == 0) {
+			if (object->flags & OFBlockHasCopyDispose)
+				object->disposeByref(object);
+
+			free(object);
+		}
+
+		break;
+	}
+}
+
+@implementation OFBlock
++ (instancetype)alloc
+{
+	OF_UNRECOGNIZED_SELECTOR
+}
+
+- (instancetype)init
+{
+	OF_INVALID_INIT_METHOD
+}
+
+- (instancetype)retain
+{
+	if ([self isMemberOfClass: (Class)&_NSConcreteMallocBlock])
+		return Block_copy(self);
+
+	return self;
+}
+
+- (id)copy
+{
+	return Block_copy(self);
+}
+
+- (instancetype)autorelease
+{
+	if ([self isMemberOfClass: (Class)&_NSConcreteMallocBlock])
+		return [super autorelease];
+
+	return self;
+}
+
+- (unsigned int)retainCount
+{
+	if ([self isMemberOfClass: (Class)&_NSConcreteMallocBlock])
+		return ((struct Block *)self)->flags & OFBlockRefCountMask;
+
+	return OFMaxRetainCount;
+}
+
+- (void)release
+{
+	if ([self isMemberOfClass: (Class)&_NSConcreteMallocBlock])
+		Block_release(self);
+}
+
+- (void)dealloc
+{
+	OF_DEALLOC_UNSUPPORTED
+}
+@end
+
+#endif /* !__APPLE__ */

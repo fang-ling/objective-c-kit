@@ -1,8 +1,12 @@
 /*
- *  ObjectiveCKit.h
+ *  pre_ivar.h
  *  objective-c-kit
  *
- *  Created by Fang Ling on 2026/4/12.
+ *  Derived from ObjFW by Fang Ling on 2026/4/18.
+ *
+ *  Copyright (c) 2008-2026 Jonathan Schleifer <js@nil.im>
+ *
+ *  All rights reserved.
  *
  *  This program is free software: you can redistribute it and/or modify it
  *  under the terms of the GNU Lesser General Public License version 3.0 only,
@@ -18,9 +22,25 @@
  *  <https://www.gnu.org/licenses/>.
  */
 
-#ifndef ObjectiveCKit_h
-#define ObjectiveCKit_h
+#ifndef __APPLE__
 
-#import "../../ObjectiveCObject.h"
+enum _objc_object_info {
+	_OBJC_OBJECT_INFO_WEAK_REFERENCES = 0x1,
+	_OBJC_OBJECT_INFO_ASSOCIATIONS = 0x02
+};
 
-#endif /* ObjectiveCKit_h */
+struct objc_pre_ivars {
+#ifdef OF_MSDOS
+	ptrdiff_t offset;
+#endif
+	volatile int retainCount;
+	volatile unsigned int info;
+};
+
+#define _OBJC_PRE_IVARS_ALIGNED \
+	OFRoundUpToPowerOf2(sizeof(struct objc_pre_ivars), OF_BIGGEST_ALIGNMENT)
+#define _OBJC_PRE_IVARS(obj)					\
+	((struct objc_pre_ivars *)(void *)((char *)obj -	\
+	    _OBJC_PRE_IVARS_ALIGNED))
+
+#endif /* !__APPLE__ */
