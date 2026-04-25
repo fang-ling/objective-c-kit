@@ -22,14 +22,30 @@
 
 import PackageDescription
 
+let isDevelopment = false
+
+let dependencies = [
+  ("c-kit", "main")
+]
+
 let package = Package(
   name: "objective-c-kit",
   products: [
     .library(name: "ObjectiveCKit", targets: ["ObjectiveCKit"])
   ],
+  dependencies: dependencies.map({
+    if isDevelopment {
+      return .package(path: "../\($0.0)")
+    } else {
+      return .package(url: "https://github.com/fang-ling/\($0.0)", branch: $0.1)
+    }
+  }),
   targets: [
     .target(
       name: "ObjectiveCKit",
+      dependencies: [
+        .product(name: "CKit", package: "c-kit")
+      ],
       exclude: [
         "ObjFW/lookup-asm/lookup-asm-amd64-elf.S",
         "ObjFW/lookup-asm/lookup-asm-arm64-elf.S",
