@@ -26,7 +26,9 @@
 #  import "ObjFW/OFObject.h"
 #endif
 
-OBJECTIVE_C_ASSUME_NONNULL_BEGIN
+#import <CKit/CKit.h>
+
+C_ASSUME_NONNULL_BEGIN
 
 /**
  * The root class of most Objective-C class hierarchies, from which subclasses
@@ -145,4 +147,4 @@ OBJECTIVE_C_ASSUME_NONNULL_BEGIN
 
 @end
 
-OBJECTIVE_C_ASSUME_NONNULL_END
+C_ASSUME_NONNULL_END
