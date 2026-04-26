@@ -31,6 +31,7 @@
 #define owning __strong
 #define nonowning __weak
 #define bridging __bridge
+#define retained_bridging __bridge_retained
 
 /**
  * A pointer to an instance of a class.
