@@ -18,7 +18,7 @@
  *  <https://www.gnu.org/licenses/>.
  */
 
-#import "Base.h"
+#import "ObjectiveCBase.h"
 
 #ifdef __APPLE__
 #  import <objc/NSObject.h>
