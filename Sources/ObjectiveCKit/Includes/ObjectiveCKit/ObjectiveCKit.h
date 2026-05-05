@@ -21,6 +21,7 @@
 #ifndef ObjectiveCKit_h
 #define ObjectiveCKit_h
 
+#import "../../ObjectiveCBase.h"
 #import "../../ObjectiveCObject.h"
 
 #endif /* ObjectiveCKit_h */

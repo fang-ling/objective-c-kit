@@ -1,5 +1,5 @@
 /*
- *  Base.h
+ *  ObjectiveCBase.h
  *  objective-c-kit
  *
  *  Created by Fang Ling on 2026/4/18.
@@ -18,11 +18,8 @@
  *  <https://www.gnu.org/licenses/>.
  */
 
-#ifndef Base_h
-#define Base_h
-
-#import <stdbool.h>
-#import <stdint.h>
+#ifndef ObjectiveCBase_h
+#define ObjectiveCBase_h
 
 #define OBJECTIVE_C_DESIGNATED_INITIALIZER \
   __attribute__((objc_designated_initializer))
@@ -31,34 +28,12 @@
 #define owning __strong
 #define nonowning __weak
 #define bridging __bridge
+#define retainedbridging __bridge_retained
+#define transferredbridging __bridge_transfer
 
 /**
  * A pointer to an instance of a class.
  */
 typedef id ObjectiveCAnyObject;
 
-/**
- * A value type whose instances are either `true` or `false`.
- *
- * It's recommended to use only simple Boolean values in conditional contexts to
- * help avoid accidental programming errors and to help maintain the clarity of
- * each control statement.
- */
-typedef bool ObjectiveCBoolean;
-
-/**
- * A 32-bit signed integer value type.
- */
-typedef int32_t ObjectiveCInteger32;
-
-/**
- * A 32-bit unsigned integer value type.
- */
-typedef uint32_t ObjectiveCUnsignedInteger32;
-
-/**
- * A 64-bit signed integer value type.
- */
-typedef int64_t ObjectiveCInteger64;
-
-#endif /* Base_h */
+#endif /* ObjectiveCBase_h */
