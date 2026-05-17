@@ -36,6 +36,18 @@ C_ASSUME_NONNULL_BEGIN
   [super dealloc];
 }
 
+- (FoundationString*)copyDescription {
+  CDebuggingHaltWithMessage(
+    "*** ABSTRACT METHOD copyDescription IS BEING CALLED. ***"
+  );
+}
+
 @end
+
+FoundationString* ObjectiveCObjectCopyDescription(ObjectiveCAnyObject object) {
+  let description = [object copyDescription];
+
+  return description;
+}
 
 C_ASSUME_NONNULL_END
