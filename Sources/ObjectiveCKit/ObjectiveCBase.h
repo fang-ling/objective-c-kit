@@ -21,6 +21,12 @@
 #ifndef ObjectiveCBase_h
 #define ObjectiveCBase_h
 
+#ifdef __APPLE__
+#  import <objc/runtime.h>
+#else
+#  import "ObjFW/runtime/ObjFWRT.h"
+#endif
+
 #define OBJECTIVE_C_DESIGNATED_INITIALIZER \
   __attribute__((objc_designated_initializer))
 #define OBJECTIVE_C_REQUIRES_NIL_TERMINATION __attribute__((sentinel(0,1)))
@@ -35,5 +41,15 @@
  * A pointer to an instance of a class.
  */
 typedef id ObjectiveCAnyObject;
+
+/**
+ * Returns the class definition of a specified class.
+ *
+ * - Parameter name: The name of the class to look up.
+ *
+ * - Returns The Class object for the named class, or `nil` if the class is not
+ *   registered with the Objective-C runtime.
+ */
+#define ObjectiveCLookUpClass objc_lookUpClass
 
 #endif /* ObjectiveCBase_h */

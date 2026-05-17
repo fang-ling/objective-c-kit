@@ -30,6 +30,8 @@
 
 C_ASSUME_NONNULL_BEGIN
 
+@class FoundationString;
+
 /**
  * The root class of most Objective-C class hierarchies, from which subclasses
  * inherit a basic interface to the runtime system and the ability to behave as
@@ -144,6 +146,14 @@ C_ASSUME_NONNULL_BEGIN
  * superclass's implementation as its last instruction.
  */
 - (void)dealloc;
+
+/* TODO: Turn this method to a property. */
+/**
+ * A textual representation of the receiver.
+ *
+ * - Returns: A string that describes the object.
+ */
+- (FoundationString*)copyDescription;
 
 @end
 
