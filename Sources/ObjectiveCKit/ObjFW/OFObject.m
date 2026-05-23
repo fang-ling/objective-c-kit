@@ -263,6 +263,11 @@ OFMethodNotFound_stret(void *stret, id object, SEL selector)
 	return (object == self);
 }
 
+- (unsigned long)hash {
+  /* TODO: Add hash */
+  return 0;
+}
+
 - (id)forwardingTargetForSelector: (SEL)selector
 {
 	return nil;
