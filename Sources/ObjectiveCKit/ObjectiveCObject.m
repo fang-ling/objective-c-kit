@@ -28,26 +28,24 @@ C_ASSUME_NONNULL_BEGIN
   return [super alloc];
 }
 
++ (Class)class {
+  return super.class;
+}
+
 - (instancetype)init {
   return [super init];
+}
+
+- (FoundationString*)description {
+  CDebuggingHaltWithMessage(
+    "*** ABSTRACT METHOD description IS BEING CALLED. ***"
+  );
 }
 
 - (void)dealloc {
   [super dealloc];
 }
 
-- (FoundationString*)copyDescription {
-  CDebuggingHaltWithMessage(
-    "*** ABSTRACT METHOD copyDescription IS BEING CALLED. ***"
-  );
-}
-
 @end
-
-FoundationString* ObjectiveCObjectCopyDescription(ObjectiveCAnyObject object) {
-  let description = [object copyDescription];
-
-  return description;
-}
 
 C_ASSUME_NONNULL_END
