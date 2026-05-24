@@ -57,6 +57,8 @@ let package = Package(
       cSettings: [
         .unsafeFlags(["-fobjc-runtime=objfw-1.5"], .when(platforms: [.wasi])),
         .unsafeFlags(["-fno-objc-arc"]),
+        .unsafeFlags(["-fno-constant-cfstrings"]),
+        .unsafeFlags(["-fconstant-string-class=_FoundationConstantString"]),
         .headerSearchPath("ObjFW"),
         .headerSearchPath("ObjFW/runtime")
       ]

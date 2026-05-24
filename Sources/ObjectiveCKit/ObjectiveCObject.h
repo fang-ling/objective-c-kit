@@ -54,6 +54,20 @@ C_ASSUME_NONNULL_BEGIN
 #endif
 
 /**
+ * The class object.
+ *
+ * Refer to a class only by its name when it is the receiver of a message. In
+ * all other cases, the class object must be obtained through this or a similar
+ * method.
+ */
+@property (nonatomic, readonly, class) Class class;
+
+/**
+ * A textual representation of this instance.
+ */
+@property (nonatomic, readonly, copy) FoundationString* description;
+
+/**
  * Returns a new instance of the receiving class.
  *
  * This is an instance variable of the new instance that is initialized to a
@@ -146,14 +160,6 @@ C_ASSUME_NONNULL_BEGIN
  * superclass's implementation as its last instruction.
  */
 - (void)dealloc;
-
-/* TODO: Turn this method to a property. */
-/**
- * A textual representation of the receiver.
- *
- * - Returns: A string that describes the object.
- */
-- (FoundationString*)copyDescription;
 
 @end
 
