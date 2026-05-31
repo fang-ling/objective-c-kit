@@ -33,6 +33,21 @@
 
 #define owning __strong
 #define nonowning __weak
+
+#define weakify(value) \
+  autoreleasepool {} \
+  _Pragma("clang diagnostic push") \
+  _Pragma("clang diagnostic ignored \"-Wshadow\"") \
+  __weak __typeof__(value) _weak_##value = value; \
+  _Pragma("clang diagnostic pop")
+
+#define strongify(value) \
+  autoreleasepool {} \
+  _Pragma("clang diagnostic push") \
+  _Pragma("clang diagnostic ignored \"-Wshadow\"") \
+  __strong __typeof__(_weak_##value) value = _weak_##value; \
+  _Pragma("clang diagnostic pop")
+
 #define bridging __bridge
 #define retainedbridging __bridge_retained
 #define transferredbridging __bridge_transfer
