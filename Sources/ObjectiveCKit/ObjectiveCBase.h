@@ -52,6 +52,8 @@
 #define retainedbridging __bridge_retained
 #define transferredbridging __bridge_transfer
 
+#define nullresettable null_resettable
+
 /**
  * A pointer to an instance of a class.
  */

@@ -45,6 +45,9 @@ C_ASSUME_NONNULL_BEGIN
  * - ``init``
  * - ``dealloc``
  *
+ * ### Testing Object Inheritance, Behavior, and Conformance
+ *
+ * - ``isKindOfClass:``
  */
 @interface ObjectiveCObject
 #ifdef __APPLE__
@@ -160,6 +163,37 @@ C_ASSUME_NONNULL_BEGIN
  * superclass's implementation as its last instruction.
  */
 - (void)dealloc;
+
+/**
+ * Returns a Boolean value that indicates whether the receiver is an instance of
+ * given class or an instance of any class that inherits from that class.
+ *
+ * Be careful when using this method on objects represented by a class cluster.
+ * Because of the nature of class clusters, the object you get back may not
+ * always be the type you expected. If you call a method that returns a class
+ * cluster, the exact type returned by the method is the best indicator of what
+ * you can do with that object. For example, if a method returns a pointer to an
+ * ``FoundationArray`` object, you should not use this method to see if the
+ * array is mutable, as shown in the following code:
+ *
+ *   ```objective-c
+ *   // DO NOT DO THIS!
+ *   if ([myArray isKindOfClass:FoundationMutableArray.class]) {
+ *    // Modify the object
+ *   }
+ *   ```
+ *
+ * If you use such constructs in your code, you might think it is alright to
+ * modify an object that in reality should not be modified. Doing so might then
+ * create problems for other code that expected the object to remain unchanged.
+ *
+ * - Parameter class: A class object representing the Objective-C class to be
+ *   tested.
+ *
+ * - Returns: `yes` if the receiver is an instance of the `class` or an instance
+ *   of any class that inherits from `class`, otherwise `no`.
+ */
+- (CBoolean)isKindOfClass:(Class)class;
 
 @end
 

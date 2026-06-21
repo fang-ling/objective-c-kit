@@ -46,6 +46,10 @@ C_ASSUME_NONNULL_BEGIN
   [super dealloc];
 }
 
+- (CBoolean)isKindOfClass:(Class)class {
+  return [super isKindOfClass:class];
+}
+
 @end
 
 C_ASSUME_NONNULL_END
