@@ -22,6 +22,7 @@
 #define ObjectiveCKit_h
 
 #import "../../ObjectiveCBase.h"
+#import "../../ObjectiveCCopyable.h"
 #import "../../ObjectiveCEquatable.h"
 #import "../../ObjectiveCObject.h"
 
