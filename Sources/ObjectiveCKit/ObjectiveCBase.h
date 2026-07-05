@@ -33,6 +33,7 @@
 
 #define owning __strong
 #define nonowning __weak
+#define unsafeunretained __unsafe_unretained
 
 #define weakify(value) \
   autoreleasepool {} \
