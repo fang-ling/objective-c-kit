@@ -50,6 +50,11 @@ C_ASSUME_NONNULL_BEGIN
   return [super isKindOfClass:class];
 }
 
+/* MARK: - ObjectiveCObject Implementations */
+- (CBoolean)respondsToSelector:(ObjectiveCSelector)selector {
+  return [super respondsToSelector:selector];
+}
+
 @end
 
 C_ASSUME_NONNULL_END
