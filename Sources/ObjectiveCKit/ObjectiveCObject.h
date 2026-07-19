@@ -33,6 +33,67 @@ C_ASSUME_NONNULL_BEGIN
 @class FoundationString;
 
 /**
+ * The group of methods that are fundamental to all Objective-C objects.
+ *
+ * An object that conforms to this protocol can be considered a first-class
+ * object. Such an object can be asked about its:
+ *
+ *   - Class, and the place of its class in the inheritance hierarchy.
+ *   - Conformance to protocols.
+ *   - Ability to respond to a particular message.
+ *
+ * The root class ``ObjectiveCObject`` adopts this protocol, so all objects
+ * inheriting from ``ObjectiveCObject`` have the features described by this
+ * protocol.
+ *
+ * ## Topics
+ *
+ * ### Testing Object Inheritance, Behavior, and Conformance
+ *
+ * - ``respondsToSelector:``
+ */
+@protocol ObjectiveCObject
+
+/**
+ * Returns a Boolean value that indicates whether the receiver implements or
+ * inherits a method that can respond to a specified message.
+ *
+ * The application is responsible for determining whether a `no` response should
+ * be considered an error.
+ *
+ * You cannot test whether an object inherits a method from its superclass by
+ * sending ``respondsToSelector:`` to the object using the `super` keyword.
+ * This method will still be testing the object as a whole, not just the
+ * superclass's implementation. Therefore, sending ``respondsToSelector:`` to
+ * `super` is equivalent to sending it to `self`. Instead, you must invoke the
+ * ``ObjectiveCObject`` class method ``instancesRespondToSelector:`` directly
+ * on the object's superclass, as illustrated in the following code fragment.
+ *
+ *   ```objective-c
+ *   if ([MySuperclass instancesRespondToSelector:@selector(aMethod)]) {
+ *     // invoke the inherited method
+ *     [super aMethod];
+ *   }
+ *   ```
+ *
+ * You cannot simply use
+ * `[self.superclass instancesRespondToSelector:@selector(aMethod)]` since this
+ * may cause the method to fail if it is invoked by a subclass.
+ *
+ * Note that if the receiver is able to forward the `selector` messages to
+ * another object, it will be able to respond to the message, albeit indirectly,
+ * even though this method returns `no`.
+ *
+ * - Parameter selector: A selector that identifies a message.
+ *
+ * - Returns: `yes` if the receiver implements or inherits a method that can
+ *   respond to the `selector`, otherwise `no`.
+ */
+- (CBoolean)respondsToSelector:(ObjectiveCSelector)selector;
+
+@end
+
+/**
  * The root class of most Objective-C class hierarchies, from which subclasses
  * inherit a basic interface to the runtime system and the ability to behave as
  * Objective-C objects.
@@ -51,9 +112,9 @@ C_ASSUME_NONNULL_BEGIN
  */
 @interface ObjectiveCObject
 #ifdef __APPLE__
-: NSObject
+: NSObject <ObjectiveCObject>
 #else
-: OFObject
+: OFObject <ObjectiveCObject>
 #endif
 
 /**
