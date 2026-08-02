@@ -1,24 +1,22 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.3
 
+//===--------------------------------------------------------------------------------------------------------------------------------------------------------------------------===//
 //
 //  Package.swift
-//  objective-c-kit
+//  core-graphics-kit
 //
 //  Created by Fang Ling on 2026/4/12.
 //
-//  This program is free software: you can redistribute it and/or modify it
-//  under the terms of the GNU Lesser General Public License version 3.0 only,
-//  as published by the Free Software Foundation.
+//  This source file is part of the CoreGraphicsKit open source project
 //
-//  This program is distributed in the hope that it will be useful, but WITHOUT
-//  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-//  FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
-//  version 3.0 for more details.
+//  Copyright (c) 2026 Fang Ling <fangling@fangl.ing>
+//  Licensed under Apache License v2.0
 //
-//  You should have received a copy of the GNU Lesser General Public License
-//  version 3.0 along with this program. If not, see
-//  <https://www.gnu.org/licenses/>.
+//  See LICENSE for license information
 //
+//  SPDX-License-Identifier: Apache-2.0
+//
+//===--------------------------------------------------------------------------------------------------------------------------------------------------------------------------===//
 
 import PackageDescription
 
@@ -29,39 +27,16 @@ let dependencies = [
 ]
 
 let package = Package(
-  name: "objective-c-kit",
+  name: "core-graphics-kit",
   products: [
-    .library(name: "ObjectiveCKit", targets: ["ObjectiveCKit"])
+    .library(name: "CoreGraphicsKit", targets: ["CoreGraphicsKit"])
   ],
-  dependencies: dependencies.map({
-    if isDevelopment {
-      return .package(path: "../\($0.0)")
-    } else {
-      return .package(url: "https://github.com/fang-ling/\($0.0)", branch: $0.1)
-    }
-  }),
+  dependencies: dependencies.map{ isDevelopment ? .package(path: "../\($0.0)") : .package(url: "https://github.com/fang-ling/\($0.0)", branch: $0.1) },
   targets: [
     .target(
-      name: "ObjectiveCKit",
-      dependencies: [
-        .product(name: "CKit", package: "c-kit")
-      ],
-      exclude: [
-        "ObjFW/lookup-asm/lookup-asm-amd64-elf.S",
-        "ObjFW/lookup-asm/lookup-asm-arm64-elf.S",
-        "ObjFW/platform/POSIX/OFPlainMutex.m",
-        "ObjFW/OFPlainMutex.m",
-        "ObjFW/OFOnce.m"
-      ],
-      publicHeadersPath: "Includes",
-      cSettings: [
-        .unsafeFlags(["-fobjc-runtime=objfw-1.5"], .when(platforms: [.wasi])),
-        .unsafeFlags(["-fno-objc-arc"]),
-        .unsafeFlags(["-fno-constant-cfstrings"]),
-        .unsafeFlags(["-fconstant-string-class=_FoundationConstantString"]),
-        .headerSearchPath("ObjFW"),
-        .headerSearchPath("ObjFW/runtime")
-      ]
+      name: "CoreGraphicsKit",
+      dependencies: dependencies.map { .product(name: $0.0.components(separatedBy: "-").map({ $0.capitalized }).joined(), package: $0.0) },
+      publicHeadersPath: "Includes"
     )
   ]
 )
