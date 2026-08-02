@@ -35,9 +35,7 @@ let package = Package(
   targets: [
     .target(
       name: "CoreGraphicsKit",
-      dependencies: [
-        .product(name: "CKit", package: "c-kit")
-      ],
+      dependencies: dependencies.map { .product(name: $0.0.components(separatedBy: "-").map({ $0.capitalized }).joined(), package: $0.0) },
       publicHeadersPath: "Includes"
     )
   ]
