@@ -1,9 +1,9 @@
 /*===--------------------------------------------------------------------------------------------------------------------------------------------------------------------------===*
  *
- *  CoreGraphicsKit.h
+ *  CoreGraphicsRectangle.h
  *  core-graphics-kit
  *
- *  Created by Fang Ling on 2026/4/12.
+ *  Created by Fang Ling on 2026/8/2.
  *
  *  This source file is part of the CoreGraphicsKit open source project
  *
@@ -16,11 +16,38 @@
  *
  *===--------------------------------------------------------------------------------------------------------------------------------------------------------------------------===*/
 
-#ifndef CoreGraphicsKit_h
-#define CoreGraphicsKit_h
+#ifndef CoreGraphicsRectangle_h
+#define CoreGraphicsRectangle_h
 
-#include "../../Geometric Data Types/CoreGraphicsPoint.h"
-#include "../../Geometric Data Types/CoreGraphicsRectangle.h"
-#include "../../Geometric Data Types/CoreGraphicsSize.h"
+#include <CKit/CKit.h>
 
-#endif /* CoreGraphicsKit_h */
+#include "CoreGraphicsPoint.h"
+#include "CoreGraphicsSize.h"
+
+C_ASSUME_NONNULL_BEGIN
+
+/**
+ * A rectangle.
+ *
+ * ## Topics
+ *
+ * ### Geometric Properties
+ *
+ * - ``origin``
+ * - ``size``
+ */
+typedef struct CoreGraphicsRectangle {
+  /**
+   * The rectangle's origin point.
+   */
+  CoreGraphicsPoint origin;
+
+  /**
+   * The size of the rectangle.
+   */
+  CoreGraphicsSize size;
+} CoreGraphicsRectangle;
+
+C_ASSUME_NONNULL_END
+
+#endif /* CoreGraphicsRectangle_h */
