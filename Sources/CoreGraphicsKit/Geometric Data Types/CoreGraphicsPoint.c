@@ -1,9 +1,9 @@
 /*===--------------------------------------------------------------------------------------------------------------------------------------------------------------------------===*
  *
- *  CoreGraphicsKit.h
+ *  CoreGraphicsPoint.c
  *  core-graphics-kit
  *
- *  Created by Fang Ling on 2026/4/12.
+ *  Created by Fang Ling on 2026/8/2.
  *
  *  This source file is part of the CoreGraphicsKit open source project
  *
@@ -16,10 +16,8 @@
  *
  *===--------------------------------------------------------------------------------------------------------------------------------------------------------------------------===*/
 
-#ifndef CoreGraphicsKit_h
-#define CoreGraphicsKit_h
+#include "CoreGraphicsPoint.h"
 
-#include "../../Geometric Data Types/CoreGraphicsPoint.h"
-#include "../../Geometric Data Types/CoreGraphicsSize.h"
+C_ASSUME_NONNULL_BEGIN
 
-#endif /* CoreGraphicsKit_h */
+C_ASSUME_NONNULL_END
