@@ -1,4 +1,4 @@
-/*===--------------------------------------------------------------------------------------------------------------------------------------------------------------------------===*
+/*===----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------===*
  *
  *  CoreGraphicsPoint.h
  *  core-graphics-kit
@@ -14,7 +14,7 @@
  *
  *  SPDX-License-Identifier: Apache-2.0
  *
- *===--------------------------------------------------------------------------------------------------------------------------------------------------------------------------===*/
+ *===----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------===*/
 
 #ifndef CoreGraphicsPoint_h
 #define CoreGraphicsPoint_h
@@ -32,6 +32,10 @@ C_ASSUME_NONNULL_BEGIN
  *
  * - ``x``
  * - ``y``
+ *
+ * ### Comparing Points
+ *
+ * - ``CoreGraphicsPointIsEqual``
  */
 typedef struct CoreGraphicsPoint {
   /**
@@ -44,6 +48,17 @@ typedef struct CoreGraphicsPoint {
    */
   CFloatingPoint64 y;
 } CoreGraphicsPoint;
+
+/**
+ * Returns whether two points are equal.
+ *
+ * - Parameters:
+ *  - p1: The first source point.
+ *  - p2: The second source point.
+ *
+ * - Returns: Returns a Boolean value indicating whether two points are equal.
+ */
+CBoolean CoreGraphicsPointIsEqual(CoreGraphicsPoint p1, CoreGraphicsPoint p2);
 
 C_ASSUME_NONNULL_END
 

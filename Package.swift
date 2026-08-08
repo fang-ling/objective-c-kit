@@ -1,6 +1,6 @@
 // swift-tools-version: 6.3
 
-//===--------------------------------------------------------------------------------------------------------------------------------------------------------------------------===//
+//===----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------===//
 //
 //  Package.swift
 //  core-graphics-kit
@@ -16,14 +16,14 @@
 //
 //  SPDX-License-Identifier: Apache-2.0
 //
-//===--------------------------------------------------------------------------------------------------------------------------------------------------------------------------===//
+//===----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------===//
 
 import PackageDescription
 
 let isDevelopment = false
 
 let dependencies = [
-  ("c-kit", "main")
+  ("c-kit", "CKit", "main")
 ]
 
 let package = Package(
@@ -31,11 +31,15 @@ let package = Package(
   products: [
     .library(name: "CoreGraphicsKit", targets: ["CoreGraphicsKit"])
   ],
-  dependencies: dependencies.map{ isDevelopment ? .package(path: "../\($0.0)") : .package(url: "https://github.com/fang-ling/\($0.0)", branch: $0.1) },
+  dependencies: dependencies.map{ isDevelopment ? .package(path: "../\($0.0)") : .package(url: "https://github.com/fang-ling/\($0.0)", branch: $0.2) },
   targets: [
     .target(
       name: "CoreGraphicsKit",
-      dependencies: dependencies.map { .product(name: $0.0.components(separatedBy: "-").map({ $0.capitalized }).joined(), package: $0.0) },
+      dependencies: ["CoreGraphicsKitEssentials", "CoreGraphicsKitExtras"]
+    ),
+    .target(
+      name: "CoreGraphicsKitEssentials",
+      dependencies: dependencies.map { .product(name: $0.1, package: $0.0) },
       publicHeadersPath: "Includes"
     )
   ]
