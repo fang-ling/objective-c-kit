@@ -41,6 +41,18 @@ let package = Package(
       name: "CoreGraphicsKitEssentials",
       dependencies: dependencies.map { .product(name: $0.1, package: $0.0) },
       publicHeadersPath: "Includes"
+    ),
+    .target(
+      name: "CoreGraphicsKitExtras",
+      dependencies: [
+        "CoreGraphicsKitEssentials"
+      ]
+    ),
+    .testTarget(
+      name: "CoreGraphicsKitTests",
+      dependencies: [
+        "CoreGraphicsKit"
+      ]
     )
   ]
 )
