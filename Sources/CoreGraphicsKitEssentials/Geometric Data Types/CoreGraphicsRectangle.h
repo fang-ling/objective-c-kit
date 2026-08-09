@@ -1,4 +1,4 @@
-/*===--------------------------------------------------------------------------------------------------------------------------------------------------------------------------===*
+/*===----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------===*
  *
  *  CoreGraphicsRectangle.h
  *  core-graphics-kit
@@ -14,7 +14,7 @@
  *
  *  SPDX-License-Identifier: Apache-2.0
  *
- *===--------------------------------------------------------------------------------------------------------------------------------------------------------------------------===*/
+ *===----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------===*/
 
 #ifndef CoreGraphicsRectangle_h
 #define CoreGraphicsRectangle_h
@@ -35,6 +35,10 @@ C_ASSUME_NONNULL_BEGIN
  *
  * - ``origin``
  * - ``size``
+ *
+ * ### Comparing Rectangles
+ *
+ * - ``CoreGraphicsRectangleIsEqual``
  */
 typedef struct CoreGraphicsRectangle {
   /**
@@ -47,6 +51,17 @@ typedef struct CoreGraphicsRectangle {
    */
   CoreGraphicsSize size;
 } CoreGraphicsRectangle;
+
+/**
+ * Returns whether two rectangles are equal.
+ *
+ * - Parameters:
+ *  - r1: The first source rectangle.
+ *  - r2: The second source rectangle.
+ *
+ * - Returns: Returns a Boolean value indicating whether two rectangles are equal.
+ */
+CBoolean CoreGraphicsRectangleIsEqual(CoreGraphicsRectangle r1, CoreGraphicsRectangle r2);
 
 C_ASSUME_NONNULL_END
 
